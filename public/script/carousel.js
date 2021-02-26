@@ -5,25 +5,27 @@ export default class Carousel {
         this.slideWrap = bannerRef.slideWrap;
         this.pagingList = bannerRef.pagingList;
         this.pagingIcons = bannerRef.pagingIcons;
+        this.slideTime = bannerRef.slideTime;
+        this.slideNum = bannerRef.slideNum;
         this.setEvent();
     }
     setEvent() {
-        this.prevBtn.addEventListener('click',this.translateWrap.bind(this, 1));
-        this.nextBtn.addEventListener('click',this.translateWrap.bind(this, -1));
+        this.prevBtn.addEventListener('click',this.translateWrap.bind(this, 'prev', this.slideNum, this.slideTime));
+        this.nextBtn.addEventListener('click',this.translateWrap.bind(this, 'next', this.slideNum, this.slideTime));
         this.pagingIcons.forEach(e => {
             e.addEventListener('mouseenter',this.switch.bind(this));
         })
     }
-    translateWrap(direction) {
-        this.slideWrap.style.transitionDuration = '400ms';
-        this.slideWrap.style.transform = `translateX(${direction * 100/3}%)`;
-        const btn = (direction == 1) ? 'prev' : 'next';
-        setTimeout(this.switchList.bind(this, btn), 400);
+    translateWrap(direction, slideNum, slideTime) {
+        this.slideWrap.style.transitionDuration = `${slideTime}ms`;
+        if(direction === 'prev') this.slideWrap.style.transform = `translateX(${100/slideNum}%)`;
+        else if(direction === 'next') this.slideWrap.style.transform = `translateX(${-1 * 100/slideNum}%)`;
+        setTimeout(this.switchList.bind(this, direction), slideTime);
     }
-    switchList(btn) {
+    switchList(direction) {
         const wrap = this.slideWrap;
         wrap.removeAttribute('style');
-        if(btn == 'next') wrap.appendChild(wrap.firstElementChild);
+        if(direction == 'next') wrap.appendChild(wrap.firstElementChild);
         else wrap.insertBefore(wrap.lastElementChild, wrap.firstChild);
         this.fillPaging();
     }
